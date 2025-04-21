@@ -14,6 +14,7 @@
         v-model="currentInput"
         type="text"
         placeholder="输入收件人邮箱，多个用逗号、分号、空格或回车分隔"
+        @input="handleInput"
         @keydown="handleKeyDown"
         @blur="handleBlur"
         @paste="handlePaste"
@@ -39,7 +40,7 @@ const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 // 处理键盘事件
 const handleKeyDown = (e) => {
   // 回车、逗号或分号键触发添加邮箱
-  if (e.key === 'Enter' || e.key === ',' || e.key === '，' || e.key === ';' || e.key === '；' || e.key === ' ') {
+  if (e.key === 'Enter' || e.key === ',' || e.code === 'Comma' || e.key === ';' || e.code === 'Semicolon' || e.key === ' ') {
     e.preventDefault()
     addEmails()
   }
@@ -49,16 +50,21 @@ const handleKeyDown = (e) => {
     emailTags.value.pop()
   }
 }
+const handleInput = (e) => {
+  if (e.target.value == '；' || e.target.value == '，') {
+    e.target.value = ''
+  }
+}
 
 // 添加邮箱
 const addEmails = () => {
   errorMessage.value = ''
-  if (!currentInput.value.trim()) return
-  
+  if (!currentInput.value.trim()) {
+    return
+  }
   // 分割多个邮箱（支持逗号、分号分隔）
   const newEmails = currentInput.value.split(/[,;，；\n ]\s*/)
   let hasError = false
-  
   newEmails.forEach(email => {
     email = email.trim()
     if (!email) return
@@ -67,7 +73,7 @@ const addEmails = () => {
     const isDuplicate = emailTags.value.some(tag => tag.address === email)
     
     if (isDuplicate) {
-      errorMessage.value = `邮箱 ${email} 已存在`
+      // errorMessage.value = `邮箱 ${email} 已存在`
       hasError = true
       return
     }
@@ -78,7 +84,7 @@ const addEmails = () => {
     })
     
     if (!isValid) {
-      errorMessage.value = `邮箱 ${email} 格式不正确`
+      // errorMessage.value = `邮箱 ${email} 格式不正确`
       hasError = true
     }
   })
