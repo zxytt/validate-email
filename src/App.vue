@@ -56,7 +56,7 @@ const addEmails = () => {
   if (!currentInput.value.trim()) return
   
   // 分割多个邮箱（支持逗号、分号分隔）
-  const newEmails = currentInput.value.split(/[,;]\s*/)
+  const newEmails = currentInput.value.split(/[,;，；\n ]\s*/)
   let hasError = false
   
   newEmails.forEach(email => {
